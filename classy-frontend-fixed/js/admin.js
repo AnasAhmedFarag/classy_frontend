@@ -3,11 +3,30 @@
 // Connected to Backend API
 // ================================
 
-// API URL - can be configured via localStorage or defaults to localhost
+// API URL - can be configured via localStorage or defaults to production backend
 function getApiUrl() {
   return localStorage.getItem('classy_api_url') || 'https://classy-backend.vercel.app/api';
 }
 let API_URL = getApiUrl();
+
+// مهلة زمنية للطلبات: لو السيرفر معلّق، نوقف الانتظار ونرجّع رسالة واضحة
+// بدل ما الصفحة تفضل بتحمّل للأبد من غير أي رسالة توضح السبب
+async function fetchWithTimeout(url, options = {}, timeoutMs = 45000) {
+  const controller = new AbortController();
+  const timer = setTimeout(() => controller.abort(), timeoutMs);
+  try {
+    return await fetch(url, { ...options, signal: controller.signal });
+  } finally {
+    clearTimeout(timer);
+  }
+}
+
+function describeFetchError(e) {
+  if (e.name === 'AbortError') {
+    return 'انتهت المهلة: السيرفر أخد وقت طويل ولم يرد. لو بترفع صورة، جرب صورة أصغر أو استخدم رابط خارجي.';
+  }
+  return 'تعذر الاتصال بالسيرفر: ' + e.message;
+}
 
 // ===== AUTH =====
 function getToken() { return localStorage.getItem('classy_admin_token'); }
@@ -36,85 +55,53 @@ function logout() {
 // ===== API HELPERS =====
 async function apiGet(endpoint) {
   try {
-    const res = await fetch(getApiUrl() + endpoint, { headers: getAuthHeaders() });
+    const res = await fetchWithTimeout(getApiUrl() + endpoint, { headers: getAuthHeaders() });
     return await res.json();
-  } catch (e) { return { success: false, error: e.message }; }
+  } catch (e) { return { success: false, error: describeFetchError(e) }; }
 }
 async function apiPostForm(endpoint, formData) {
   try {
-    const res = await fetch(getApiUrl() + endpoint, {
+    const res = await fetchWithTimeout(getApiUrl() + endpoint, {
       method: 'POST',
       headers: getAuthHeaders(), // Don't set Content-Type - browser sets it with boundary for FormData
       body: formData
     });
     return await res.json();
-  } catch (e) { return { success: false, error: e.message }; }
+  } catch (e) { return { success: false, error: describeFetchError(e) }; }
 }
 async function apiPutForm(endpoint, formData) {
   try {
-    const res = await fetch(getApiUrl() + endpoint, {
+    const res = await fetchWithTimeout(getApiUrl() + endpoint, {
       method: 'PUT',
       headers: getAuthHeaders(),
       body: formData
     });
     return await res.json();
-  } catch (e) { return { success: false, error: e.message }; }
+  } catch (e) { return { success: false, error: describeFetchError(e) }; }
 }
 async function apiDelete(endpoint) {
   try {
-    const res = await fetch(getApiUrl() + endpoint, { method: 'DELETE', headers: getAuthHeaders() });
+    const res = await fetchWithTimeout(getApiUrl() + endpoint, { method: 'DELETE', headers: getAuthHeaders() });
     return await res.json();
-  } catch (e) { return { success: false, error: e.message }; }
+  } catch (e) { return { success: false, error: describeFetchError(e) }; }
 }
 // FIX: لإرسال بيانات فيها object متداخل (زي customer) لازم تتبعت JSON مش
 // URLSearchParams. URLSearchParams بيحول أي object جواه لنص "[object Object]"
 // وده كان بيسبب خطأ الـ Cast في الباك اند عند تعديل الطلب.
 async function apiPutJSON(endpoint, bodyObj) {
   try {
-    const res = await fetch(getApiUrl() + endpoint, {
+    const res = await fetchWithTimeout(getApiUrl() + endpoint, {
       method: 'PUT',
       headers: { ...getAuthHeaders(), 'Content-Type': 'application/json' },
       body: JSON.stringify(bodyObj)
     });
     return await res.json();
-  } catch (e) { return { success: false, error: e.message }; }
+  } catch (e) { return { success: false, error: describeFetchError(e) }; }
 }
 
-// ===== DEMO DATA (Fallback) =====
+// ===== DATA (populated from the real backend; no demo fallback) =====
 let products = [], orders = [], customers = [], galleryItems = [];
 let categories = [];
-
-const DEMO_PRODUCTS = [
-  { _id: 'p1', name: 'كتاب تلوين Mandala', category: 'كتب تلوين', price: 120, stock: 25, status: 'active', rating: 4.9, reviews: 45, image: 'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=100&h=100&fit=crop', description: 'كتاب تلوين فاخر' },
-  { _id: 'p2', name: 'بوكس ورد مجفف', category: 'بوكسات ورد', price: 350, stock: 10, status: 'active', rating: 4.8, reviews: 32, image: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=100&h=100&fit=crop', description: 'بوكس خشبي أنيق' },
-  { _id: 'p3', name: 'نوتة Van Gogh', category: 'نوتات مخصصة', price: 85, stock: 30, status: 'active', rating: 4.7, reviews: 28, image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=100&h=100&fit=crop', description: 'نوتة A5 فنية' },
-  { _id: 'p4', name: 'تغريسة تخرج Senior', category: 'تغريسات تخرج', price: 60, stock: 50, status: 'active', rating: 4.9, reviews: 65, image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=100&h=100&fit=crop', description: 'تغريسة خشبية' },
-  { _id: 'p5', name: 'برواز مولود', category: 'براويز مواليد', price: 200, stock: 15, status: 'active', rating: 5.0, reviews: 40, image: 'https://images.unsplash.com/photo-1515488042361-ee00e0ddd4e4?w=100&h=100&fit=crop', description: 'برواز تفاصيل الميلاد' },
-];
-
-const DEMO_ORDERS = [
-  { _id: 'o1', orderNumber: '#ORD00001', customer: { name: 'فاطمة محمد', phone: '201226832747', email: 'fatima@example.com', address: 'القاهرة، مصر الجديدة' }, items: [{ productName: 'بوكس ورد مجفف', quantity: 1, price: 350 }, { productName: 'نوتة Van Gogh', quantity: 1, price: 85 }], totalPrice: 435, paymentMethod: 'cash_on_delivery', shippingMethod: 'standard', status: 'pending', notes: 'يرجى التواصل قبل التوصيل', date: '23 أغسطس 2026', createdAt: '2026-08-23T10:00:00.000Z' },
-  { _id: 'o2', orderNumber: '#ORD00002', customer: { name: 'نور أحمد', phone: '201111111111', email: 'nour@example.com', address: 'الإسكندرية، سموحة' }, items: [{ productName: 'كتاب تلوين Mandala', quantity: 1, price: 120 }], totalPrice: 120, paymentMethod: 'cash_on_delivery', shippingMethod: 'express', status: 'processing', notes: '', date: '22 أغسطس 2026', createdAt: '2026-08-22T10:00:00.000Z' },
-  { _id: 'o3', orderNumber: '#ORD00003', customer: { name: 'ياسمين خالد', phone: '201222222222', email: 'yasmin@example.com', address: 'الجيزة، الدقي' }, items: [{ productName: 'برواز مولود', quantity: 1, price: 200 }, { productName: 'تغريسة تخرج', quantity: 1, price: 60 }], totalPrice: 260, paymentMethod: 'cash_on_delivery', shippingMethod: 'standard', status: 'delivered', notes: 'هدية', date: '21 أغسطس 2026', createdAt: '2026-08-21T10:00:00.000Z' },
-  { _id: 'o4', orderNumber: '#ORD00004', customer: { name: 'سارة علي', phone: '201333333333', email: 'sara@example.com', address: 'القاهرة، مدينة نصر' }, items: [{ productName: 'نوتة Van Gogh', quantity: 1, price: 85 }, { productName: 'بوكس ورد', quantity: 1, price: 350 }], totalPrice: 435, paymentMethod: 'cash_on_delivery', shippingMethod: 'standard', status: 'pending', notes: '', date: '20 أغسطس 2026', createdAt: '2026-08-20T10:00:00.000Z' },
-  { _id: 'o5', orderNumber: '#ORD00005', customer: { name: 'محمد حسن', phone: '201444444444', email: 'mohamed@example.com', address: 'القاهرة، المعادي' }, items: [{ productName: 'تغريسة تخرج', quantity: 5, price: 60 }], totalPrice: 300, paymentMethod: 'cash_on_delivery', shippingMethod: 'express', status: 'processing', notes: '5 تغريسات', date: '19 أغسطس 2026', createdAt: '2026-08-19T10:00:00.000Z' },
-  { _id: 'o6', orderNumber: '#ORD00006', customer: { name: 'ليلى سامي', phone: '201555555555', email: 'laila@example.com', address: 'طنطا، شارع الجيش' }, items: [{ productName: 'كتاب تلوين', quantity: 2, price: 120 }, { productName: 'نوتة', quantity: 1, price: 85 }], totalPrice: 325, paymentMethod: 'online', shippingMethod: 'standard', status: 'cancelled', notes: 'ألغى العميل', date: '18 أغسطس 2026', createdAt: '2026-08-18T10:00:00.000Z' },
-];
-
-const DEMO_CUSTOMERS = [
-  { _id: 'c1', name: 'فاطمة محمد', email: 'fatima@example.com', phone: '201226832747', address: 'القاهرة، مصر', orders: 5, total: 1250, date: '15 يناير 2026' },
-  { _id: 'c2', name: 'نور أحمد', email: 'nour@example.com', phone: '201111111111', address: 'الإسكندرية، مصر', orders: 3, total: 680, date: '20 فبراير 2026' },
-  { _id: 'c3', name: 'ياسمين خالد', email: 'yasmin@example.com', phone: '201222222222', address: 'الجيزة، مصر', orders: 8, total: 2100, date: '5 مارس 2026' },
-  { _id: 'c4', name: 'سارة علي', email: 'sara@example.com', phone: '201333333333', address: 'القاهرة، مصر', orders: 2, total: 870, date: '10 أبريل 2026' },
-  { _id: 'c5', name: 'محمد حسن', email: 'mohamed@example.com', phone: '201444444444', address: 'القاهرة، مصر', orders: 4, total: 1500, date: '25 مايو 2026' },
-];
-
-const DEMO_GALLERY = [
-  { _id: 'g1', title: 'كتاب تلوين', desc: 'Mandala Design', category: 'كتب تلوين', image: 'https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=400&h=400&fit=crop' },
-  { _id: 'g2', title: 'بوكس ورد', desc: 'ورد مجفف وردي', category: 'بوكسات ورد', image: 'https://images.unsplash.com/photo-1526047932273-341f2a7631f9?w=400&h=400&fit=crop' },
-  { _id: 'g3', title: 'نوتة مخصصة', desc: 'Van Gogh Design', category: 'نوتات مخصصة', image: 'https://images.unsplash.com/photo-1544816155-12df9643f363?w=400&h=400&fit=crop' },
-  { _id: 'g4', title: 'تغريسة تخرج', desc: 'Senior 2026', category: 'تغريسات تخرج', image: 'https://images.unsplash.com/photo-1523050854058-8df90110c9f1?w=400&h=400&fit=crop' },
-];
 
 // ===== STATUS CONFIG =====
 const STATUS_CONFIG = {
@@ -217,15 +204,31 @@ function handleUrlPreview(url) {
 }
 
 // ===== LOAD DATA =====
+// FIX: مفيش أي بيانات وهمية (Demo) بديلة بعد دلوقتي. لو السيرفر فشل، الجدول
+// بيفضل فاضي وبتظهر رسالة خطأ واضحة بدل ما يوهمك إن فيه طلبات/منتجات حقيقية.
 async function loadAllData() {
   const prodRes = await apiGet('/products');
-  products = prodRes.success && prodRes.data ? prodRes.data : DEMO_PRODUCTS;
+  if (prodRes.success && prodRes.data) {
+    products = prodRes.data;
+  } else {
+    products = [];
+    showToast('تعذر تحميل المنتجات: ' + (prodRes.error || prodRes.message || 'خطأ غير معروف'), 'error');
+  }
+
   const ordRes = await apiGet('/orders');
-  orders = ordRes.success && ordRes.data ? ordRes.data : DEMO_ORDERS;
+  if (ordRes.success && ordRes.data) {
+    orders = ordRes.data;
+  } else {
+    orders = [];
+    showToast('تعذر تحميل الطلبات: ' + (ordRes.error || ordRes.message || 'خطأ غير معروف'), 'error');
+  }
+
   const catRes = await apiGet('/categories');
   categories = catRes.success && catRes.data ? catRes.data : [];
+
   const galRes = await apiGet('/gallery');
-  galleryItems = galRes.success && galRes.data ? galRes.data : DEMO_GALLERY;
+  galleryItems = galRes.success && galRes.data ? galRes.data : [];
+
   customers = extractCustomersFromOrders();
 
   renderDashboardOrders();
@@ -303,7 +306,12 @@ function formatDate(d) {
 // ===== PRODUCTS =====
 async function loadProducts() {
   const res = await apiGet('/products');
-  if (res.success && res.data) products = res.data;
+  if (res.success && res.data) {
+    products = res.data;
+  } else {
+    products = [];
+    showToast('تعذر تحميل المنتجات: ' + (res.error || res.message || 'خطأ غير معروف'), 'error');
+  }
   renderProductsTable();
 }
 
@@ -387,9 +395,11 @@ function editProduct(id) {
   openModal('productModal');
 }
 
+// FIX: منع الضغط المتكرر على "حفظ المنتج" أثناء انتظار الرد. كان بيسمح بإرسال
+// نفس الطلب أكتر من مرة (لو المستخدم ضغط تاني وهو مستني)، فبيتحفظ نفس المنتج
+// كذا نسخة. دلوقتي الزرار بيتقفل ويتحول لـ "جاري الحفظ..." لحد ما الرد يوصل.
 async function saveProduct() {
   const saveBtn = document.getElementById('saveProductBtn');
-  // منع الضغط المتكرر: لو الزرار مقفول معناه فيه طلب شغال بالفعل
   if (saveBtn && saveBtn.disabled) return;
 
   const id = document.getElementById('productEditId').value;
@@ -437,9 +447,9 @@ async function saveProduct() {
       res = await apiPostForm('/products', formData);
       if (res.success) showToast('تم إضافة المنتج بنجاح!', 'success');
     }
-    if (!res.success) showToast(res.message || res.error || 'حدث خطأ', 'error');
-
-    if (res.success) {
+    if (!res.success) {
+      showToast(res.message || res.error || 'حدث خطأ', 'error');
+    } else {
       closeModal('productModal');
       removeImagePreview();
     }
@@ -456,7 +466,12 @@ async function saveProduct() {
 // ===== ORDERS =====
 async function loadOrders() {
   const res = await apiGet('/orders');
-  if (res.success && res.data) orders = res.data;
+  if (res.success && res.data) {
+    orders = res.data;
+  } else {
+    orders = [];
+    showToast('تعذر تحميل الطلبات: ' + (res.error || res.message || 'خطأ غير معروف'), 'error');
+  }
   customers = extractCustomersFromOrders();
   renderOrdersTable();
 }
@@ -656,7 +671,11 @@ function viewCustomer(id) {
 // ===== GALLERY =====
 async function loadGallery() {
   const res = await apiGet('/gallery');
-  if (res.success && res.data) galleryItems = res.data;
+  if (res.success && res.data) {
+    galleryItems = res.data;
+  } else {
+    galleryItems = [];
+  }
   renderGalleryGrid();
 }
 
@@ -854,7 +873,7 @@ async function testApiConnection() {
   if (!resultDiv) return;
   resultDiv.innerHTML = '<span class="text-blue-500">جاري الاختبار...</span>';
   try {
-    const res = await fetch(getApiUrl().replace('/api', '') + '/api/health');
+    const res = await fetchWithTimeout(getApiUrl().replace('/api', '') + '/api/health', {}, 15000);
     const data = await res.json();
     if (data.success) {
       resultDiv.innerHTML = '<span class="text-green-500"><i class="fas fa-check-circle"></i> الاتصال ناجح! السيرفر يعمل.</span>';
@@ -862,7 +881,7 @@ async function testApiConnection() {
       resultDiv.innerHTML = '<span class="text-yellow-500">⚠️ السيرفر رد بس فيه مشكلة.</span>';
     }
   } catch (e) {
-    resultDiv.innerHTML = '<span class="text-red-500"><i class="fas fa-times-circle"></i> فشل الاتصال. تأكد من الرابط.</span>';
+    resultDiv.innerHTML = '<span class="text-red-500"><i class="fas fa-times-circle"></i> ' + describeFetchError(e) + '</span>';
   }
 }
 
