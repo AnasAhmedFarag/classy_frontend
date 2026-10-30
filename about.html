@@ -1,0 +1,105 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>من نحن | CLASSY</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>tailwind.config={theme:{extend:{colors:{primary:'#C8A2C8','primary-dark':'#A67BA6',secondary:'#E8B4B8','secondary-dark':'#D4959A',accent:'#D4AF37',dark:'#2D2D2D',light:'#FAF7F5',cream:'#FDF8F3',rose:'#FCE7F3',lavender:'#E6E0F5',peach:'#FFE5D9'}}}}</script>
+</head>
+<body>
+  <header class="header">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="logo-container"><img src="raq.png" alt="CLASSY Logo" class="logo-img"><span class="brand-name hidden sm:block">CLASSY</span></a>
+        <nav class="desktop-nav hidden lg:flex items-center gap-1">
+          <a href="index.html" class="nav-link">الرئيسية</a>
+          <a href="products.html" class="nav-link">المنتجات</a>
+          <a href="gallery.html" class="nav-link">معرض الأعمال</a>
+          <a href="custom-order.html" class="nav-link">طلب مخصص</a>
+          <a href="about.html" class="nav-link active">من نحن</a>
+          <a href="contact.html" class="nav-link">تواصل معنا</a>
+        </nav>
+        <div class="flex items-center gap-4">
+          <a href="cart.html" class="relative p-2 text-dark hover:text-primary-dark transition-colors"><i class="fas fa-shopping-bag text-xl"></i><span class="cart-badge" id="cartCount" style="display:none;">0</span></a>
+          <button class="hamburger lg:hidden" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-menu-overlay" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" class="mobile-nav-link">الرئيسية</a>
+    <a href="products.html" class="mobile-nav-link">المنتجات</a>
+    <a href="gallery.html" class="mobile-nav-link">معرض الأعمال</a>
+    <a href="custom-order.html" class="mobile-nav-link">طلب مخصص</a>
+    <a href="about.html" class="mobile-nav-link">من نحن</a>
+    <a href="contact.html" class="mobile-nav-link">تواصل معنا</a>
+    <a href="cart.html" class="mobile-nav-link"><i class="fas fa-shopping-bag ml-2"></i> سلة التسوق</a>
+  </div>
+
+  <section class="page-header">
+    <div class="container mx-auto px-4 text-center relative z-10">
+      <h1 class="text-4xl font-bold mb-3">من نحن</h1>
+      <p class="text-gray-600 text-lg">تعرف على قصة CLASSY ورسالتنا</p>
+    </div>
+  </section>
+
+  <section class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+        <div><img src="https://images.unsplash.com/photo-1513519245088-0e12902e35ca?w=600&h=500&fit=crop" alt="About CLASSY" class="rounded-3xl shadow-xl w-full"></div>
+        <div>
+          <h2 class="text-3xl font-bold mb-6">قصتنا</h2>
+          <p class="text-gray-600 mb-4 leading-relaxed text-lg">بدأت CLASSY برؤية بسيطة: خلق هدايا فريدة تنبع من القلب. نؤمن بأن أجمل الهدايا هي اللي بتكون مصنوعة بالإيد ومحملة بالمشاعر.</p>
+          <p class="text-gray-600 mb-4 leading-relaxed text-lg">من كتب التلوين للكبار اللي بتساعد على الاسترخاء، لبوكسات الورد المجفف اللي بتخلّد الذكريات، لنوتات مخصصة بتصاميم فنية — كل قطعة بنعملها بتكون فريدة من نوعها.</p>
+          <p class="text-gray-600 leading-relaxed text-lg">نفخر بكوننا براند مصري 100%، بنصنع كل حاجة بأيدينا وبنحط فيها روحنا.</p>
+        </div>
+      </div>
+      <div class="grid md:grid-cols-2 gap-12 items-center mb-20">
+        <div class="order-2 md:order-1">
+          <h2 class="text-3xl font-bold mb-6">رؤيتنا</h2>
+          <p class="text-gray-600 mb-4 leading-relaxed text-lg">أن نكون الوجهة الأولى في مصر للهدايا اليدوية المخصصة. نسعى لإلهام الناس بإبداعاتنا ونخلّل كل مناسبة لحظة لا تُنسى.</p>
+          <p class="text-gray-600 leading-relaxed text-lg">نؤمن إن الهدية مش مجرد حاجة مادية — هي مشاعر، ذكريات، ورسالة من القلب.</p>
+        </div>
+        <div class="order-1 md:order-2"><img src="https://images.unsplash.com/photo-1524758631624-e2822e304c36?w=600&h=500&fit=crop" alt="Vision" class="rounded-3xl shadow-xl w-full"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="py-16 bg-white">
+    <div class="container mx-auto px-4 text-center">
+      <h2 class="section-title mb-12">قيمنا</h2>
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-8">
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-hand-holding-heart"></i></div><h3 class="text-xl font-bold mb-3">الإتقان</h3><p class="text-gray-600">كل قطعة بنعملها بإتقان واهتمام بالتفاصيل</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-palette"></i></div><h3 class="text-xl font-bold mb-3">الإبداع</h3><p class="text-gray-600">نبحث دائماً عن الأفكار الجديدة والمبتكرة</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-users"></i></div><h3 class="text-xl font-bold mb-3">العملاء أولاً</h3><p class="text-gray-600">رضاكم هو هدفنا الأسمى ونجاحنا يقاس بنجاحكم</p></div>
+        <div class="feature-card"><div class="feature-icon"><i class="fas fa-heart"></i></div><h3 class="text-xl font-bold mb-3">الشغف</h3><p class="text-gray-600">نحب شغلنا ونضع قلوبنا في كل تفصيلة</p></div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+        <div class="text-center md:text-right"><img src="images/logo.png" alt="CLASSY Logo" class="footer-logo mx-auto md:mx-0"><h3 class="text-xl font-bold mb-3">CLASSY</h3><p class="text-gray-400 text-sm">براند راق متخصص في الهدايا اليدوية المخصصة.</p></div>
+        <div class="text-center md:text-right"><h4>روابط سريعة</h4><a href="index.html" class="footer-link">الرئيسية</a><a href="products.html" class="footer-link">المنتجات</a><a href="gallery.html" class="footer-link">معرض الأعمال</a><a href="custom-order.html" class="footer-link">طلب مخصص</a></div>
+        <div class="text-center md:text-right"><h4>خدمة العملاء</h4><a href="about.html" class="footer-link">من نحن</a><a href="contact.html" class="footer-link">تواصل معنا</a><a href="#" class="footer-link">سياسة الإرجاع</a><a href="#" class="footer-link">الأسئلة الشائعة</a></div>
+        <div class="text-center md:text-right"><h4>تابعنا</h4><div class="flex justify-center md:justify-start gap-2"><a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-icon"><i class="fab fa-instagram"></i></a><a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a><a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a></div></div>
+      </div>
+      <div class="border-t border-gray-700 pt-6 text-center"><p class="text-gray-500 text-sm">© 2026 CLASSY - براند راق. جميع الحقوق محفوظة.</p></div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/201226832747" target="_blank" class="whatsapp-float"><i class="fab fa-whatsapp"></i></a>
+  <div class="toast" id="toast"></div>
+  <script src="js/app.js"></script>
+  <script>
+    function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('open'); document.getElementById('mobileOverlay').classList.toggle('open'); }
+    document.addEventListener('DOMContentLoaded', function() { updateCartCount(); });
+  </script>
+</body>
+</html>

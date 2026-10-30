@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>تسجيل الدخول | CLASSY Admin</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <style>
+    :root {
+      --primary: #C8A2C8;
+      --primary-dark: #A67BA6;
+      --secondary: #E8B4B8;
+      --dark: #1E1E2D;
+      --light: #F5F5F9;
+    }
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+    body {
+      font-family: 'Cairo', sans-serif;
+      background: linear-gradient(135deg, var(--dark) 0%, #2D2D44 50%, #1A1A2E 100%);
+      min-height: 100vh;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      overflow: hidden;
+      position: relative;
+    }
+    body::before {
+      content: '';
+      position: absolute;
+      top: -20%; right: -10%;
+      width: 600px; height: 600px;
+      background: radial-gradient(circle, rgba(200,162,200,0.15) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    body::after {
+      content: '';
+      position: absolute;
+      bottom: -20%; left: -10%;
+      width: 500px; height: 500px;
+      background: radial-gradient(circle, rgba(232,180,184,0.1) 0%, transparent 70%);
+      border-radius: 50%;
+    }
+    .login-card {
+      background: rgba(255,255,255,0.03);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(255,255,255,0.08);
+      border-radius: 24px;
+      padding: 48px;
+      width: 100%;
+      max-width: 440px;
+      position: relative;
+      z-index: 10;
+      box-shadow: 0 25px 80px rgba(0,0,0,0.4);
+    }
+    .login-logo {
+      width: 80px;
+      height: 80px;
+      border-radius: 20px;
+      object-fit: cover;
+      border: 3px solid var(--primary);
+      padding: 4px;
+      background: white;
+      margin: 0 auto 20px;
+      display: block;
+    }
+    .login-title {
+      text-align: center;
+      color: white;
+      font-size: 1.6rem;
+      font-weight: 700;
+      margin-bottom: 8px;
+    }
+    .login-subtitle {
+      text-align: center;
+      color: rgba(255,255,255,0.5);
+      font-size: 0.9rem;
+      margin-bottom: 32px;
+    }
+    .form-group {
+      margin-bottom: 20px;
+    }
+    .form-label {
+      display: block;
+      color: rgba(255,255,255,0.7);
+      font-weight: 600;
+      font-size: 0.9rem;
+      margin-bottom: 8px;
+    }
+    .input-wrapper {
+      position: relative;
+    }
+    .form-input {
+      width: 100%;
+      padding: 14px 16px 14px 48px;
+      background: rgba(255,255,255,0.05);
+      border: 1px solid rgba(255,255,255,0.1);
+      border-radius: 12px;
+      color: white;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      transition: all 0.3s ease;
+    }
+    .form-input::placeholder { color: rgba(255,255,255,0.3); }
+    .form-input:focus {
+      outline: none;
+      border-color: var(--primary);
+      background: rgba(255,255,255,0.08);
+      box-shadow: 0 0 0 4px rgba(200,162,200,0.1);
+    }
+    .input-icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      color: rgba(255,255,255,0.4);
+      font-size: 1.1rem;
+    }
+    .btn-login {
+      width: 100%;
+      padding: 14px;
+      background: linear-gradient(135deg, var(--primary), var(--primary-dark));
+      color: white;
+      border: none;
+      border-radius: 12px;
+      font-family: 'Cairo', sans-serif;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+      transition: all 0.3s ease;
+      margin-top: 10px;
+    }
+    .btn-login:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 10px 30px rgba(200,162,200,0.3);
+    }
+    .btn-login:disabled {
+      opacity: 0.6;
+      cursor: not-allowed;
+      transform: none;
+    }
+    .login-footer {
+      text-align: center;
+      margin-top: 24px;
+      color: rgba(255,255,255,0.4);
+      font-size: 0.85rem;
+    }
+    .login-footer a {
+      color: var(--primary);
+      text-decoration: none;
+    }
+    .error-msg {
+      background: rgba(239,68,68,0.15);
+      border: 1px solid rgba(239,68,68,0.3);
+      color: #FCA5A5;
+      padding: 12px 16px;
+      border-radius: 10px;
+      font-size: 0.9rem;
+      margin-bottom: 16px;
+      display: none;
+      align-items: center;
+      gap: 8px;
+    }
+    .error-msg.show { display: flex; }
+    .spinner {
+      width: 18px; height: 18px;
+      border: 2px solid rgba(255,255,255,0.3);
+      border-top-color: white;
+      border-radius: 50%;
+      animation: spin 0.8s linear infinite;
+      display: inline-block;
+    }
+    @keyframes spin { to { transform: rotate(360deg); } }
+    @media (max-width: 480px) {
+      .login-card { padding: 32px 24px; margin: 16px; }
+    }
+  </style>
+</head>
+<body>
+  <div class="login-card">
+    <img src="raq.png" alt="CLASSY" class="login-logo">
+    <h1 class="login-title">CLASSY Admin</h1>
+    <p class="login-subtitle">لوحة تحكم براند راق — تسجيل الدخول</p>
+
+    <div class="error-msg" id="errorMsg">
+      <i class="fas fa-exclamation-circle"></i>
+      <span id="errorText">البريد الإلكتروني أو كلمة المرور غير صحيحة</span>
+    </div>
+
+    <form id="loginForm" onsubmit="handleLogin(event)">
+      <div class="form-group">
+        <label class="form-label">البريد الإلكتروني</label>
+        <div class="input-wrapper">
+          <input type="email" class="form-input" id="email" placeholder="user@odoo.com" required autofocus>
+          <i class="fas fa-envelope input-icon"></i>
+        </div>
+      </div>
+      <div class="form-group">
+        <label class="form-label">كلمة المرور</label>
+        <div class="input-wrapper">
+          <input type="password" class="form-input" id="password" placeholder="••••••••" required>
+          <i class="fas fa-lock input-icon"></i>
+        </div>
+      </div>
+      <button type="submit" class="btn-login" id="loginBtn">
+        <span id="btnText">تسجيل الدخول</span>
+      </button>
+    </form>
+
+    <div class="login-footer">
+      <p>© 2026 CLASSY — براند راق</p>
+      <p style="margin-top:8px;"><a href="../index.html"><i class="fas fa-arrow-right ml-1"></i> العودة للموقع</a></p>
+    </div>
+  </div>
+
+  <script>
+    // نسخة v2 - بدون حساب احتياطي
+    const API_URL = 'https://classy-backend.vercel.app/api';
+
+    function showError(msg) {
+      document.getElementById('errorText').textContent = msg;
+      document.getElementById('errorMsg').classList.add('show');
+    }
+
+    async function handleLogin(e) {
+      e.preventDefault();
+      const btn = document.getElementById('loginBtn');
+      const btnText = document.getElementById('btnText');
+      document.getElementById('errorMsg').classList.remove('show');
+
+      btn.disabled = true;
+      btnText.innerHTML = '<span class="spinner"></span> جاري تسجيل الدخول...';
+
+      const email = document.getElementById('email').value.trim();
+      const password = document.getElementById('password').value;
+
+      try {
+        const res = await fetch(`${API_URL}/auth/login`, {
+          method: 'POST',
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ email, password })
+        });
+
+        const text = await res.text();
+        let data = null;
+        try { data = JSON.parse(text); } catch (_) {}
+
+        if (data && data.success) {
+          localStorage.setItem('classy_admin_token', data.token);
+          localStorage.setItem('classy_admin_user', JSON.stringify(data.user));
+          window.location.href = 'admin.html';
+        } else if (data) {
+          showError(data.message || 'بيانات الدخول غير صحيحة');
+        } else {
+          console.error('Server response:', res.status, text.slice(0, 300));
+          showError('السيرفر رد بخطأ رقم ' + res.status);
+        }
+      } catch (err) {
+        console.error('Login request failed:', err);
+        showError('تعذر الاتصال بالخادم (غالباً مشكلة CORS)');
+      } finally {
+        btn.disabled = false;
+        btnText.textContent = 'تسجيل الدخول';
+      }
+    }
+
+    // امسح أي توكن وهمي قديم
+    const savedToken = localStorage.getItem('classy_admin_token');
+    if (savedToken && savedToken.startsWith('demo_token_')) {
+      localStorage.removeItem('classy_admin_token');
+      localStorage.removeItem('classy_admin_user');
+    } else if (savedToken) {
+      window.location.href = 'admin.html';
+    }
+  </script>
+</body>
+</html>

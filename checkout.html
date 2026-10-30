@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>إتمام الطلب | CLASSY</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <link href="https://fonts.googleapis.com/css2?family=Cairo:wght@300;400;500;600;700;800;900&family=Playfair+Display:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+  <link rel="stylesheet" href="css/style.css">
+  <script>tailwind.config={theme:{extend:{colors:{primary:'#C8A2C8','primary-dark':'#A67BA6',secondary:'#E8B4B8','secondary-dark':'#D4959A',accent:'#D4AF37',dark:'#2D2D2D',light:'#FAF7F5',cream:'#FDF8F3',rose:'#FCE7F3',lavender:'#E6E0F5',peach:'#FFE5D9'}}}}</script>
+</head>
+<body>
+  <header class="header">
+    <div class="container mx-auto px-4 py-3">
+      <div class="flex items-center justify-between">
+        <a href="index.html" class="logo-container"><img src="raq.png" alt="CLASSY Logo" class="logo-img"><span class="brand-name hidden sm:block">CLASSY</span></a>
+        <nav class="desktop-nav hidden lg:flex items-center gap-1">
+          <a href="index.html" class="nav-link">الرئيسية</a>
+          <a href="products.html" class="nav-link">المنتجات</a>
+          <a href="gallery.html" class="nav-link">معرض الأعمال</a>
+          <a href="custom-order.html" class="nav-link">طلب مخصص</a>
+          <a href="about.html" class="nav-link">من نحن</a>
+          <a href="contact.html" class="nav-link">تواصل معنا</a>
+        </nav>
+        <div class="flex items-center gap-4">
+          <a href="cart.html" class="relative p-2 text-dark hover:text-primary-dark transition-colors"><i class="fas fa-shopping-bag text-xl"></i><span class="cart-badge" id="cartCount" style="display:none;">0</span></a>
+          <button class="hamburger lg:hidden" onclick="toggleMobileMenu()"><span></span><span></span><span></span></button>
+        </div>
+      </div>
+    </div>
+  </header>
+  <div class="mobile-menu-overlay" id="mobileOverlay" onclick="toggleMobileMenu()"></div>
+  <div class="mobile-menu" id="mobileMenu">
+    <a href="index.html" class="mobile-nav-link">الرئيسية</a>
+    <a href="products.html" class="mobile-nav-link">المنتجات</a>
+    <a href="gallery.html" class="mobile-nav-link">معرض الأعمال</a>
+    <a href="custom-order.html" class="mobile-nav-link">طلب مخصص</a>
+    <a href="about.html" class="mobile-nav-link">من نحن</a>
+    <a href="contact.html" class="mobile-nav-link">تواصل معنا</a>
+    <a href="cart.html" class="mobile-nav-link"><i class="fas fa-shopping-bag ml-2"></i> سلة التسوق</a>
+  </div>
+
+  <section class="page-header">
+    <div class="container mx-auto px-4 text-center relative z-10">
+      <h1 class="text-4xl font-bold mb-3">إتمام الطلب</h1>
+      <p class="text-gray-600 text-lg">أدخل بياناتك لإتمام عملية الشراء</p>
+    </div>
+  </section>
+
+  <section class="py-16">
+    <div class="container mx-auto px-4">
+      <div class="grid lg:grid-cols-2 gap-10">
+        <div class="checkout-form">
+          <h2 class="text-2xl font-bold mb-6">بيانات العميل</h2>
+          <form id="checkoutForm" onsubmit="submitOrder(event)">
+            <div class="grid md:grid-cols-2 gap-4">
+              <div class="form-group"><label class="form-label">الاسم الكامل *</label><input type="text" class="form-input" name="name" required placeholder="أدخل اسمك الكامل"></div>
+              <div class="form-group"><label class="form-label">رقم الهاتف *</label><input type="tel" class="form-input" name="phone" required placeholder="مثال: 201226832747"></div>
+            </div>
+            <div class="form-group"><label class="form-label">البريد الإلكتروني</label><input type="email" class="form-input" name="email" placeholder="example@email.com"></div>
+            <div class="form-group"><label class="form-label">العنوان بالتفصيل *</label><textarea class="form-textarea" name="address" rows="3" required placeholder="المدينة، المنطقة، الشارع، رقم المبنى..."></textarea></div>
+            <h2 class="text-2xl font-bold mb-6 mt-8">طريقة الدفع</h2>
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+              <label class="flex items-center gap-3 p-4 border-2 border-primary rounded-xl cursor-pointer bg-lavender/30">
+                <input type="radio" name="paymentMethod" value="cash_on_delivery" checked class="w-5 h-5 text-primary">
+                <div><div class="font-bold">الدفع عند الاستلام</div><div class="text-sm text-gray-500">ادفع نقداً عند استلام طلبك</div></div>
+                <i class="fas fa-money-bill-wave text-2xl text-green-500 mr-auto"></i>
+              </label>
+              <label class="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer opacity-50">
+                <input type="radio" name="paymentMethod" value="online" disabled class="w-5 h-5 text-primary">
+                <div><div class="font-bold">دفع إلكتروني</div><div class="text-sm text-gray-500">قريباً</div></div>
+                <i class="fas fa-credit-card text-2xl text-primary mr-auto"></i>
+              </label>
+            </div>
+            <h2 class="text-2xl font-bold mb-6">طريقة الشحن</h2>
+            <div class="grid md:grid-cols-2 gap-4 mb-6">
+              <label class="flex items-center gap-3 p-4 border-2 border-primary rounded-xl cursor-pointer bg-lavender/30">
+                <input type="radio" name="shippingMethod" value="standard" checked class="w-5 h-5 text-primary">
+                <div><div class="font-bold">شحن عادي</div><div class="text-sm text-gray-500">2-5 أيام عمل - مجاني</div></div>
+                <span class="mr-auto font-bold text-primary-dark">مجاني</span>
+              </label>
+              <label class="flex items-center gap-3 p-4 border-2 border-gray-200 rounded-xl cursor-pointer hover:border-primary transition-colors">
+                <input type="radio" name="shippingMethod" value="express" class="w-5 h-5 text-primary">
+                <div><div class="font-bold">شحن سريع</div><div class="text-sm text-gray-500">1-2 يوم عمل</div></div>
+                <span class="mr-auto font-bold text-primary-dark">50 EGP</span>
+              </label>
+            </div>
+            <div class="form-group"><label class="form-label">ملاحظات إضافية</label><textarea class="form-textarea" name="notes" rows="2" placeholder="أي ملاحظات خاصة بالطلب..."></textarea></div>
+            <button type="submit" class="btn-primary w-full justify-center mt-6" id="submitBtn"><i class="fas fa-check-circle"></i> تأكيد الطلب</button>
+          </form>
+        </div>
+        <div>
+          <div class="cart-summary">
+            <h3 class="text-xl font-bold mb-6">ملخص الطلب</h3>
+            <div id="checkoutItems" class="space-y-4 mb-6 max-h-80 overflow-y-auto"></div>
+            <div class="border-t pt-4 space-y-3">
+              <div class="flex justify-between text-gray-600"><span>المجموع الفرعي</span><span id="checkoutSubtotal">0 EGP</span></div>
+              <div class="flex justify-between text-gray-600"><span>الشحن</span><span id="checkoutShipping">مجاني</span></div>
+              <div class="border-t pt-3 flex justify-between font-bold text-xl"><span>الإجمالي</span><span class="text-primary-dark" id="checkoutTotal">0 EGP</span></div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <footer class="footer">
+    <div class="container mx-auto px-4">
+      <div class="grid grid-cols-1 md:grid-cols-4 gap-10 mb-10">
+        <div class="text-center md:text-right"><img src="images/logo.png" alt="CLASSY Logo" class="footer-logo mx-auto md:mx-0"><h3 class="text-xl font-bold mb-3">CLASSY</h3><p class="text-gray-400 text-sm">براند راق متخصص في الهدايا اليدوية المخصصة.</p></div>
+        <div class="text-center md:text-right"><h4>روابط سريعة</h4><a href="index.html" class="footer-link">الرئيسية</a><a href="products.html" class="footer-link">المنتجات</a><a href="gallery.html" class="footer-link">معرض الأعمال</a><a href="custom-order.html" class="footer-link">طلب مخصص</a></div>
+        <div class="text-center md:text-right"><h4>خدمة العملاء</h4><a href="about.html" class="footer-link">من نحن</a><a href="contact.html" class="footer-link">تواصل معنا</a><a href="#" class="footer-link">سياسة الإرجاع</a><a href="#" class="footer-link">الأسئلة الشائعة</a></div>
+        <div class="text-center md:text-right"><h4>تابعنا</h4><div class="flex justify-center md:justify-start gap-2"><a href="#" class="social-icon"><i class="fab fa-facebook-f"></i></a><a href="#" class="social-icon"><i class="fab fa-instagram"></i></a><a href="#" class="social-icon"><i class="fab fa-tiktok"></i></a><a href="#" class="social-icon"><i class="fab fa-whatsapp"></i></a></div></div>
+      </div>
+      <div class="border-t border-gray-700 pt-6 text-center"><p class="text-gray-500 text-sm">© 2026 CLASSY - براند راق. جميع الحقوق محفوظة.</p></div>
+    </div>
+  </footer>
+
+  <a href="https://wa.me/201226832747" target="_blank" class="whatsapp-float"><i class="fab fa-whatsapp"></i></a>
+  <div class="toast" id="toast"></div>
+  <script src="js/app.js"></script>
+  <script>
+    function toggleMobileMenu() { document.getElementById('mobileMenu').classList.toggle('open'); document.getElementById('mobileOverlay').classList.toggle('open'); }
+    document.addEventListener('DOMContentLoaded', function() { renderCheckoutSummary(); updateCartCount(); document.querySelectorAll('input[name="shippingMethod"]').forEach(radio => { radio.addEventListener('change', renderCheckoutSummary); }); });
+  </script>
+</body>
+</html>
